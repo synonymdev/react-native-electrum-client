@@ -1,0 +1,60 @@
+{
+  "name": "rn-electrum-client",
+  "version": "0.0.7",
+  "description": "Electrum protocol client for React Native & Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --timeout 10000 --exit -b"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/synonymdev/rn-electrum-client.git"
+  },
+  "author": "Synonym",
+  "license": "MIT",
+  "devDependencies": {
+    "electrum-host-parse": "*",
+    "mocha": "^8.2.0"
+  },
+  "peerDependencies": {
+    "@photon-sdk/react-native-tcp": "^6.0.0"
+  },
+  "react-native": {
+    "net": "@photon-sdk/react-native-tcp",
+    "tls": "@photon-sdk/react-native-tcp/tls",
+    "crypto": "react-native-crypto",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify",
+    "vm": "vm-browserify"
+  },
+  "browser": {
+    "net": "@photon-sdk/react-native-tcp",
+    "tls": "@photon-sdk/react-native-tcp/tls",
+    "crypto": "react-native-crypto",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify",
+    "vm": "vm-browserify"
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "keywords": [
+    "client",
+    "electrum",
+    "bitcoin",
+    "nodejs"
+  ],
+  "bugs": {
+    "url": "https://github.com/synonymdev/rn-electrum-client/issues"
+  },
+  "homepage": "https://github.com/synonymdev/rn-electrum-client#readme",
+  "dependencies": {}
+}
