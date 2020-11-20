@@ -13,6 +13,10 @@ class Clients {
 			bitcoin: [],
 			bitcoinTestnet: []
 		};
+		this.subscribedAddresses = {
+			bitcoin: [],
+			bitcoinTestnet: []
+		};
 	}
 	
 	updateNetwork(network) {
