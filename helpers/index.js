@@ -57,9 +57,9 @@ const pingServer = ({ id = Math.random() } = {}) => {
 		try {
 			if (clients.mainClient[clients.network] === false) await connectToRandomPeer(clients.network, clients.peers[clients.network]);
 			const { error, data } = await promiseTimeout(getTimeout(), clients.mainClient[clients.network].server_ping());
-			resolve({ id, error, method, data });
+			resolve({ id, error, method, data, network: clients.network });
 		} catch (e) {
-			resolve({ id, error: true, method, data: e });
+			resolve({ id, error: true, method, data: e, network: clients.network });
 		}
 	});
 };
@@ -70,7 +70,15 @@ const start = ({ id = Math.random(), network = "", peers = [], customPeers = []}
 	const method = "connectToPeer";
 	return new Promise(async (resolve) => {
 		try {
-			if (!network) resolve({error: true, data: {}});
+			if (!network) {
+				resolve({
+					id,
+					method: "connectToPeer",
+					error: true,
+					data: "No network specified",
+				});
+				return;
+			}
 			//Clear/Remove any previous keep-alive message.
 			try {clearInterval(electrumKeepAlive);} catch {}
 			clients.network = network;
@@ -238,7 +246,85 @@ const disconnectFromPeer = async ({ id = Math.random(), network = "" } = {}) => 
 	}
 };
 
+const getAddressScriptHashBalance = ({ scriptHash = "", id = Math.random(), network = "" } = {}) => {
+	const method = "getAddressScriptHashBalance";
+	return new Promise(async (resolve) => {
+		try {
+			if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
+			const { error, data } = await promiseTimeout(getTimeout(), clients.mainClient[network].blockchainScripthash_getBalance(scriptHash));
+			resolve({ id, error, method, data, scriptHash, network });
+		} catch (e) {
+			console.log(e);
+			return { id, error: true, method, data: e, network };
+		}
+	});
+};
+
+const getPeers = ({ id = Math.random(), network = "" } = {}) => {
+	const method = "getPeers";
+	return new Promise(async (resolve) => {
+		try {
+			if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
+			const data = await clients.mainClient[network].serverPeers_subscribe();
+			resolve({ id, error: false, method, data, network });
+		} catch (e) {
+			console.log(e);
+			resolve({ id, error: true, method, data: null, network });
+		}
+	});
+};
+
+const subscribeHeader = async ({ id = "subscribeHeader", network = "", onReceive = () => null } = {}) => {
+	try {
+		if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
+		clients.mainClient[network].subscribe.on('blockchain.headers.subscribe', (data) => {
+			console.log("Received header.");
+			console.log(data);
+			onReceive(data)
+		});
+		return { id, error: false, method: "subscribeHeader", data: "Subscribed", network };
+	} catch (e) {
+		return { id, error: true, method: "subscribeHeader", data: e, network };
+	}
+};
+
+const subscribeAddress = async ({ id = Math.random(), scriptHash = "", network = "bitcoin", onReceive = (data) => console.log(data) } = {}) => {
+	try {
+		if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
+		//Ensure this address is not already subscribed
+		if (clients.subscribedAddresses[network].includes(scriptHash)) return { id, error: false, method: "subscribeAddress", data: "" };
+		const res = await promiseTimeout(10000,  clients.mainClient[network].subscribe.on('blockchain.scripthash.subscribe', (onReceive)));
+		if (res.error) return { ...res, id, method: "subscribeAddress" };
+		const response = await promiseTimeout(10000, clients.mainClient[network].blockchainScripthash_subscribe(scriptHash));
+		if (!response.error) clients.subscribedAddresses[network].push(scriptHash);
+		return { ...response, id, method: "subscribeAddress" };
+	} catch (e) {
+		return { id, error: true, method: "subscribeAddress", data: e };
+	}
+};
+
+const getFeeEstimate = ({ blocksWillingToWait = 8, id = Math.random(), network = "" } = {}) => {
+	const method = "getFeeEstimate";
+	return new Promise(async (resolve) => {
+		try {
+			if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
+			const response = await promiseTimeout(getTimeout(), clients.mainClient[network].blockchainEstimatefee(blocksWillingToWait));
+			resolve({ ...response, id, method, network });
+		} catch (e) {
+			console.log(e);
+			resolve({ id, error: true, method, data: e, network });
+		}
+	});
+};
+
+
 module.exports = {
 	start,
-	stop
+	stop,
+	pingServer,
+	getAddressScriptHashBalance,
+	getPeers,
+	subscribeHeader,
+	subscribeAddress,
+	getFeeEstimate
 };
