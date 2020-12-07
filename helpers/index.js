@@ -20,7 +20,7 @@ const promiseTimeout = (ms, promise) => {
 			resolve({ error: true, data: "Timed Out." });
 		}, ms);
 	});
-	
+
 	return Promise.race([
 		promise,
 		timeout
@@ -216,7 +216,7 @@ const stop = async ({ network = "" } = {}) => {
 			resolve({ error: true, data: e });
 		}
 	});
-	
+
 };
 
 const disconnectFromPeer = async ({ id = Math.random(), network = "" } = {}) => {
@@ -317,12 +317,26 @@ const getFeeEstimate = ({ blocksWillingToWait = 8, id = Math.random(), network =
 	});
 };
 
+const getAddressScriptHashBalances = ({ scriptHashes = [], id = Math.random(), network = "" } = {}) => {
+	const method = "getAddressScriptHashBalances";
+	return new Promise(async (resolve) => {
+		try {
+			if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
+			const response = await promiseTimeout(getTimeout(), clients.mainClient[network].blockchainScripthash_getBalanceBatch(scriptHashes));
+			resolve({ ...response, id, method, network });
+		} catch (e) {
+			console.log(e);
+			resolve({ id, error: true, method, data: e, network });
+		}
+	});
+};
 
 module.exports = {
 	start,
 	stop,
 	pingServer,
 	getAddressScriptHashBalance,
+	getAddressScriptHashBalances,
 	getPeers,
 	subscribeHeader,
 	subscribeAddress,
