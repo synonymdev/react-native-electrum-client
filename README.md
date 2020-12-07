@@ -7,6 +7,7 @@ import {
     start,
     getPeers,
     getAddressScriptHashBalance,
+    getAddressScriptHashBalances,
     subscribeHeader,
     subscribeAddress
 } from "rn-electrum-client/helpers";
@@ -41,4 +42,43 @@ const subscribeAddressResponse = await subscribeAddress({
   onReceive: (data) => { console.log("Received some Testnet BTC!", data); }
 });
 console.log(subscribeAddressResponse);
+
+//Get Address Balances (Batch Method)
+const getAddressScriptHashes = [
+	"21031994b184684de964e930e9937b1b6d75c9af12bb99ae6ee266a724e12632",
+	"9ff2d1500272589aff699e1582dbc2f47a7bbe19f7d3a4d77e1c9e54735d4fc4",
+	"bfb2a1c0a45421f908e0b3f63cee65a2dee33ae276bdb82c6f53f6ec1d53093b",
+	"ce2b6d0b4ed19ff9b264d1d218220cae85388b6d53a539bd0852404b65d74b1b",
+	"4470798cb53a34f8adf763248c90b7b09e6375043a74346d5ad9a1b6c6cc1130"
+];
+const getAddressScriptHashBalancesResponse = await getAddressScriptHashBalances({
+    scriptHashes: getAddressScriptHashes,
+  	network: "bitcoinTestnet"
+});
+console.log(getAddressScriptHashBalancesResponse);
+
+/*
+We are also able to get out what we put in using the following pattern.
+This works with any batch method.
+*/
+const getAddressScriptHashes2 = {
+    key: "scriptHash",
+    data: [
+        {
+            address: "tb1qnv5luf8mav8263sxfa4fdr3m6kws74n0yfzzrx",
+            path: "m/84'/1'/0'/0/0",
+            scriptHash: "77ca78f9a84b48041ad71f7cc6ff6c33460c25f0cb99f558f9813ed9e63727dd"
+        },
+        {
+            address: "tb1qsmkaeekrq204w8jvty2dtpuksnlu8ct0w4pwst",
+            path: "m/84'/1'/0'/0/1",
+            scriptHash: "743514a90b216fe3b28466353b1304c90010c54a146367a1f0c9ea53511d0409"
+        },
+    ]
+};
+const getAddressScriptHashBalancesResponse2 = await getAddressScriptHashBalances({
+    scriptHashes: getAddressScriptHashes2,
+  	network: "bitcoinTestnet"
+});
+console.log(getAddressScriptHashBalancesResponse2);
 ```
