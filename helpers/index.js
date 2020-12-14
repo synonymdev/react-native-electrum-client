@@ -4,14 +4,23 @@ const clients = require("./clients");
 let electrumKeepAlive = () => null;
 let electrumKeepAliveInterval = 60000;
 
-const getTimeout = ({ arr = undefined, timeout = 1000 } = {}) => {
+const _getTimeout = ({ arr = [], timeout = 1000 } = {}) => {
 	try {
+		if (!Array.isArray(arr)) arr = _attemptToGetArray(arr);
 		if (arr && Array.isArray(arr)) return arr.length * timeout;
-		return timeout;
+		return timeout || 1000;
 	} catch {
 		return timeout;
 	}
 }
+
+const _attemptToGetArray = (scriptHashes = []) => {
+	try {
+		if (Array.isArray(scriptHashes)) return scriptHashes;
+		if ("data" in scriptHashes) return scriptHashes.data;
+		return [];
+	} catch { return []; }
+};
 
 const promiseTimeout = (ms, promise) => {
 	let id;
@@ -56,7 +65,7 @@ const pingServer = ({ id = Math.random() } = {}) => {
 	return new Promise(async (resolve) => {
 		try {
 			if (clients.mainClient[clients.network] === false) await connectToRandomPeer(clients.network, clients.peers[clients.network]);
-			const { error, data } = await promiseTimeout(getTimeout(), clients.mainClient[clients.network].server_ping());
+			const { error, data } = await promiseTimeout(_getTimeout(), clients.mainClient[clients.network].server_ping());
 			resolve({ id, error, method, data, network: clients.network });
 		} catch (e) {
 			resolve({ id, error: true, method, data: e, network: clients.network });
@@ -251,7 +260,7 @@ const getAddressScriptHashBalance = ({ scriptHash = "", id = Math.random(), netw
 	return new Promise(async (resolve) => {
 		try {
 			if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
-			const { error, data } = await promiseTimeout(getTimeout(), clients.mainClient[network].blockchainScripthash_getBalance(scriptHash));
+			const { error, data } = await promiseTimeout(_getTimeout(), clients.mainClient[network].blockchainScripthash_getBalance(scriptHash));
 			resolve({ id, error, method, data, scriptHash, network });
 		} catch (e) {
 			console.log(e);
@@ -308,7 +317,7 @@ const getFeeEstimate = ({ blocksWillingToWait = 8, id = Math.random(), network =
 	return new Promise(async (resolve) => {
 		try {
 			if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
-			const response = await promiseTimeout(getTimeout(), clients.mainClient[network].blockchainEstimatefee(blocksWillingToWait));
+			const response = await promiseTimeout(_getTimeout(), clients.mainClient[network].blockchainEstimatefee(blocksWillingToWait));
 			resolve({ ...response, id, method, network });
 		} catch (e) {
 			console.log(e);
@@ -322,8 +331,69 @@ const getAddressScriptHashBalances = ({ scriptHashes = [], id = Math.random(), n
 	return new Promise(async (resolve) => {
 		try {
 			if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
-			const response = await promiseTimeout(getTimeout(), clients.mainClient[network].blockchainScripthash_getBalanceBatch(scriptHashes));
+			const timeout = _getTimeout({ arr: scriptHashes });
+			const response = await promiseTimeout(timeout, clients.mainClient[network].blockchainScripthash_getBalanceBatch(scriptHashes));
 			resolve({ ...response, id, method, network });
+		} catch (e) {
+			console.log(e);
+			resolve({ id, error: true, method, data: e, network });
+		}
+	});
+};
+
+const listUnspentAddressScriptHashes = ({ scriptHashes = [], id = Math.random(), network = "", timeout = undefined } = {}) => {
+	const method = "listUnspentAddressScriptHashes";
+	return new Promise(async (resolve) => {
+		try {
+			if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
+			if (!timeout) timeout = _getTimeout({ arr: scriptHashes });
+			const { error, data } = await promiseTimeout(timeout, clients.mainClient[network].blockchainScripthash_listunspentBatch(scriptHashes));
+			resolve({ id, error, method, data, network });
+		} catch (e) {
+			console.log(e);
+			resolve({ id, error: true, method, data: e, network });
+		}
+	});
+};
+
+const getAddressScriptHashesHistory = ({ scriptHashes = [], id = Math.random(), network = "", timeout = undefined } = {}) => {
+	const method = "getScriptHashesHistory";
+	return new Promise(async (resolve) => {
+		try {
+			if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
+			if (!timeout) timeout = _getTimeout({ arr: scriptHashes });
+			const { error, data } = await promiseTimeout(timeout, clients.mainClient[network].blockchainScripthash_getHistoryBatch(scriptHashes));
+			resolve({ id, error, method, data, network });
+		} catch (e) {
+			console.log(e);
+			resolve({ id, error: true, method, data: e, network });
+		}
+	});
+};
+
+const getAddressScriptHashesMempool = ({ scriptHashes = [], id = Math.random(), network = "", timeout = undefined } = {}) => {
+	const method = "getAddressScriptHashesMempool";
+	return new Promise(async (resolve) => {
+		try {
+			if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
+			if (!timeout) timeout = _getTimeout({ arr: scriptHashes });
+			const { error, data } = await promiseTimeout(timeout, clients.mainClient[network].blockchainScripthash_getMempoolBatch(scriptHashes));
+			resolve({ id, error, method, data, network });
+		} catch (e) {
+			console.log(e);
+			resolve({ id, error: true, method, data: e, network });
+		}
+	});
+};
+
+const getTransactions = ({ txHashes = [], id = Math.random(), network = "", timeout = undefined } = {}) => {
+	const method = "getTransactions";
+	return new Promise(async (resolve) => {
+		try {
+			if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
+			if (!timeout) timeout = _getTimeout({ arr: scriptHashes });
+			const { error, data } = await promiseTimeout(timeout, clients.mainClient[network].blockchainTransaction_getBatch(txHashes));
+			resolve({ id, error, method, data, network });
 		} catch (e) {
 			console.log(e);
 			resolve({ id, error: true, method, data: e, network });
@@ -337,6 +407,10 @@ module.exports = {
 	pingServer,
 	getAddressScriptHashBalance,
 	getAddressScriptHashBalances,
+	listUnspentAddressScriptHashes,
+	getAddressScriptHashesHistory,
+	getAddressScriptHashesMempool,
+	getTransactions,
 	getPeers,
 	subscribeHeader,
 	subscribeAddress,
