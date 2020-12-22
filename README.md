@@ -58,7 +58,7 @@ const getAddressScriptHashBalancesResponse = await getAddressScriptHashBalances(
 console.log(getAddressScriptHashBalancesResponse);
 
 /*
-We are also able to get out what we put in using the following pattern.
+We are also able to get out what we put in using the following patterns.
 This works with any batch method.
 */
 const getAddressScriptHashes2 = {
@@ -69,11 +69,6 @@ const getAddressScriptHashes2 = {
             path: "m/84'/1'/0'/0/0",
             scriptHash: "77ca78f9a84b48041ad71f7cc6ff6c33460c25f0cb99f558f9813ed9e63727dd"
         },
-        {
-            address: "tb1qsmkaeekrq204w8jvty2dtpuksnlu8ct0w4pwst",
-            path: "m/84'/1'/0'/0/1",
-            scriptHash: "743514a90b216fe3b28466353b1304c90010c54a146367a1f0c9ea53511d0409"
-        },
     ]
 };
 const getAddressScriptHashBalancesResponse2 = await getAddressScriptHashBalances({
@@ -81,4 +76,20 @@ const getAddressScriptHashBalancesResponse2 = await getAddressScriptHashBalances
   	network: "bitcoinTestnet"
 });
 console.log(getAddressScriptHashBalancesResponse2);
+
+const getAddressScriptHashes3 = {
+    key: "scriptHash",
+    data: {
+        77ca78f9a84b48041ad71f7cc6ff6c33460c25f0cb99f558f9813ed9e63727dd: {
+            address: "tb1qnv5luf8mav8263sxfa4fdr3m6kws74n0yfzzrx",
+            path: "m/84'/1'/0'/0/0",
+            scriptHash: "77ca78f9a84b48041ad71f7cc6ff6c33460c25f0cb99f558f9813ed9e63727dd"
+        },
+    }
+};
+const getAddressScriptHashBalancesResponse3 = await getAddressScriptHashBalances({
+    scriptHashes: getAddressScriptHashes3,
+  	network: "bitcoinTestnet"
+});
+console.log(getAddressScriptHashBalancesResponse3);
 ```
