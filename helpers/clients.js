@@ -17,20 +17,24 @@ class Clients {
 			bitcoin: [],
 			bitcoinTestnet: []
 		};
+		this.subscribedHeaders = {
+			bitcoin: false,
+			bitcoinTestnet: false,
+		};
 	}
-	
+
 	updateNetwork(network) {
 		this.network = network;
 	}
-	
+
 	updateMainClient(mainClient) {
 		this.mainClient = mainClient;
 	}
-	
+
 	updatePeer(peer) {
 		this.peer = peer;
 	}
-	
+
 }
 
 module.exports = new Clients();

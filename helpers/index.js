@@ -286,12 +286,12 @@ const getPeers = ({ id = Math.random(), network = "" } = {}) => {
 const subscribeHeader = async ({ id = "subscribeHeader", network = "", onReceive = () => null } = {}) => {
 	try {
 		if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
-		clients.mainClient[network].subscribe.on('blockchain.headers.subscribe', (data) => {
-			console.log("Received header.");
-			console.log(data);
-			onReceive(data)
-		});
-		return { id, error: false, method: "subscribeHeader", data: "Subscribed", network };
+		if (clients.subscribedHeaders[network] === true) return { id, error: false, method: "subscribeHeader", data: 'Already Subscribed.', network };
+		const res = await promiseTimeout(10000,  clients.mainClient[network].subscribe.on('blockchain.headers.subscribe', (onReceive)));
+		if (res.error) return { ...res, id, method: "subscribeHeader" };
+		const response = await promiseTimeout(10000, clients.mainClient[network].blockchainHeaders_subscribe());
+		if (!response.error) clients.subscribedHeaders[network] = true;
+		return { ...response, id, method: "subscribeHeader" };
 	} catch (e) {
 		return { id, error: true, method: "subscribeHeader", data: e, network };
 	}
@@ -300,10 +300,12 @@ const subscribeHeader = async ({ id = "subscribeHeader", network = "", onReceive
 const subscribeAddress = async ({ id = Math.random(), scriptHash = "", network = "bitcoin", onReceive = (data) => console.log(data) } = {}) => {
 	try {
 		if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
+		if (clients.subscribedAddresses[network].length < 1) {
+			const res = await promiseTimeout(10000,  clients.mainClient[network].subscribe.on('blockchain.scripthash.subscribe', (data => onReceive(data))));
+			if (res.error) return { ...res, id, method: "subscribeAddress" };
+		}
 		//Ensure this address is not already subscribed
-		if (clients.subscribedAddresses[network].includes(scriptHash)) return { id, error: false, method: "subscribeAddress", data: "" };
-		const res = await promiseTimeout(10000,  clients.mainClient[network].subscribe.on('blockchain.scripthash.subscribe', (onReceive)));
-		if (res.error) return { ...res, id, method: "subscribeAddress" };
+		if (clients.subscribedAddresses[network].includes(scriptHash)) return { id, error: false, method: "subscribeAddress", data: "Already Subscribed." };
 		const response = await promiseTimeout(10000, clients.mainClient[network].blockchainScripthash_subscribe(scriptHash));
 		if (!response.error) clients.subscribedAddresses[network].push(scriptHash);
 		return { ...response, id, method: "subscribeAddress" };
