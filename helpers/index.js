@@ -7,7 +7,7 @@ let electrumKeepAliveInterval = 60000;
 const _getTimeout = ({ arr = [], timeout = 1000 } = {}) => {
 	try {
 		if (!Array.isArray(arr)) arr = _attemptToGetArray(arr);
-		if (arr && Array.isArray(arr)) return arr.length * timeout;
+		if (arr && Array.isArray(arr)) return (arr.length * timeout)/2;
 		return timeout || 1000;
 	} catch {
 		return timeout;
@@ -17,7 +17,10 @@ const _getTimeout = ({ arr = [], timeout = 1000 } = {}) => {
 const _attemptToGetArray = (scriptHashes = []) => {
 	try {
 		if (Array.isArray(scriptHashes)) return scriptHashes;
-		if ("data" in scriptHashes) return scriptHashes.data;
+		if ("data" in scriptHashes) {
+			if (Array.isArray(scriptHashes.data)) return scriptHashes.data;
+			if (typeof scriptHashes.data === 'object') return Object.values(scriptHashes.data);
+		}
 		return [];
 	} catch { return []; }
 };
@@ -133,7 +136,12 @@ const connectToPeer = ({ port = 50002, host = "", protocol = "ssl", network = "b
 			if (needToConnect) {
 				clients.mainClient[network] = new ElectrumClient(port, host, protocol);
 				connectionResponse = await promiseTimeout(1000, clients.mainClient[network].connect());
-				if (!connectionResponse.error) {
+				if (connectionResponse.error) {
+					resolve(connectionResponse);
+					return;
+				}
+				const pingResponse = pingServer();
+				if (!pingResponse.error) {
 					try {
 						//Clear/Remove Electrum's keep-alive message.
 						clearInterval(electrumKeepAlive);
@@ -301,7 +309,7 @@ const subscribeAddress = async ({ id = Math.random(), scriptHash = "", network =
 	try {
 		if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
 		if (clients.subscribedAddresses[network].length < 1) {
-			const res = await promiseTimeout(10000,  clients.mainClient[network].subscribe.on('blockchain.scripthash.subscribe', (data => onReceive(data))));
+			const res = await promiseTimeout(10000,  clients.mainClient[network].subscribe.on('blockchain.scripthash.subscribe', (onReceive)));
 			if (res.error) return { ...res, id, method: "subscribeAddress" };
 		}
 		//Ensure this address is not already subscribed
