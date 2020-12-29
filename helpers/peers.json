@@ -24,6 +24,6 @@
     {"host": "tn.not.fyi", "ssl": 55002, "tcp": 55001},
     {"host": "bitcoin.cluelessperson.com", "ssl": 51002, "tcp": 51001},
     {"host": "electrum.blockstream.info", "ssl": 60002, "tcp": 60001},
-    {"host": "testnet.aranguren.org", "ssl": 51002, "tcp": 51001},
+    {"host": "testnet.aranguren.org", "ssl": 51002, "tcp": 51001}
   ]
 }
