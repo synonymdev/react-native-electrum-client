@@ -1,5 +1,6 @@
 {
   "bitcoin": [
+    {"host": "electrum.aantonop.com", "ssl": 50002, "tcp": 50001},
     {"host": "bitcoin.lukechilds.co", "ssl": 50002, "tcp": 50001},
     {"host": "electrumx.nmdps", "ssl": 50002, "tcp": 50001},
     {"host": "oneweek.duckdns.org", "ssl": 50002, "tcp": 50001},
@@ -24,6 +25,5 @@
     {"host": "bitcoin.cluelessperson.com", "ssl": 51002, "tcp": 51001},
     {"host": "electrum.blockstream.info", "ssl": 60002, "tcp": 60001},
     {"host": "testnet.aranguren.org", "ssl": 51002, "tcp": 51001},
-    {"host": "blockstream.info", "ssl": 993, "tcp": 143}
   ]
 }

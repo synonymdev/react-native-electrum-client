@@ -140,7 +140,7 @@ const connectToPeer = ({ port = 50002, host = "", protocol = "ssl", network = "b
 					resolve(connectionResponse);
 					return;
 				}
-				const pingResponse = pingServer();
+				const pingResponse = await pingServer();
 				if (!pingResponse.error) {
 					try {
 						//Clear/Remove Electrum's keep-alive message.
@@ -153,7 +153,6 @@ const connectToPeer = ({ port = 50002, host = "", protocol = "ssl", network = "b
 					clients.peer[network] = { port, host, protocol };
 				}
 			}
-			await pauseExecution();
 			resolve(connectionResponse);
 		} catch (e) {resolve({ error: true, data: e });}
 	});
