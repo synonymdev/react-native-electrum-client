@@ -14,12 +14,12 @@ const _getTimeout = ({ arr = [], timeout = 1000 } = {}) => {
 	}
 }
 
-const _attemptToGetArray = (scriptHashes = []) => {
+const _attemptToGetArray = (item = []) => {
 	try {
-		if (Array.isArray(scriptHashes)) return scriptHashes;
-		if ("data" in scriptHashes) {
-			if (Array.isArray(scriptHashes.data)) return scriptHashes.data;
-			if (typeof scriptHashes.data === 'object') return Object.values(scriptHashes.data);
+		if (Array.isArray(item)) return item;
+		if ("data" in item) {
+			if (Array.isArray(item.data)) return item.data;
+			if (typeof item.data === 'object') return Object.values(item.data);
 		}
 		return [];
 	} catch { return []; }
@@ -400,8 +400,8 @@ const getTransactions = ({ txHashes = [], id = Math.random(), network = "", time
 	return new Promise(async (resolve) => {
 		try {
 			if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
-			if (!timeout) timeout = _getTimeout({ arr: scriptHashes });
-			const { error, data } = await promiseTimeout(timeout, clients.mainClient[network].blockchainTransaction_getBatch(txHashes));
+			if (!timeout) timeout = _getTimeout({ arr: txHashes });
+			const { error, data } = await promiseTimeout(timeout, clients.mainClient[network].blockchainTransaction_getBatch(txHashes, true));
 			resolve({ id, error, method, data, network });
 		} catch (e) {
 			console.log(e);
