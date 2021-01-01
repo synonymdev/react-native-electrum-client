@@ -4,11 +4,11 @@ const clients = require("./clients");
 let electrumKeepAlive = () => null;
 let electrumKeepAliveInterval = 60000;
 
-const _getTimeout = ({ arr = [], timeout = 1000 } = {}) => {
+const _getTimeout = ({ arr = [], timeout = 2000 } = {}) => {
 	try {
 		if (!Array.isArray(arr)) arr = _attemptToGetArray(arr);
-		if (arr && Array.isArray(arr)) return (arr.length * timeout)/2;
-		return timeout || 1000;
+		if (arr && Array.isArray(arr) && arr.length > 0) return (arr.length * timeout)/2 | timeout;
+		return timeout;
 	} catch {
 		return timeout;
 	}
@@ -137,21 +137,29 @@ const connectToPeer = ({ port = 50002, host = "", protocol = "ssl", network = "b
 				clients.mainClient[network] = new ElectrumClient(port, host, protocol);
 				connectionResponse = await promiseTimeout(1000, clients.mainClient[network].connect());
 				if (connectionResponse.error) {
-					resolve(connectionResponse);
-					return;
+					return resolve(connectionResponse);
 				}
-				const pingResponse = await pingServer();
-				if (!pingResponse.error) {
-					try {
-						//Clear/Remove Electrum's keep-alive message.
-						clearInterval(electrumKeepAlive);
-						//Start Electrum's keep-alive function. It’s sent every minute as a keep-alive message.
-						electrumKeepAlive = setInterval(async () => {
-							try {pingServer({ id: Math.random() });} catch {}
-						}, electrumKeepAliveInterval);
-					} catch (e) {}
-					clients.peer[network] = { port, host, protocol };
+				/*
+				 * The scripthash doesn't have to be valid.
+				 * We're simply testing if the server will respond to a batch request.
+				 */
+				const scriptHash = "77ca78f9a84b48041ad71f7cc6ff6c33460c25f0cb99f558f9813ed9e63727dd";
+				const testResponses = await Promise.all([
+					pingServer(),
+					getAddressScriptHashBalances({ network, scriptHashes: [scriptHash] }),
+				])
+				if (testResponses[0].error || testResponses[1].error) {
+					return resolve({ error: true, data: "" });
 				}
+				try {
+					//Clear/Remove Electrum's keep-alive message.
+					clearInterval(electrumKeepAlive);
+					//Start Electrum's keep-alive function. It’s sent every minute as a keep-alive message.
+					electrumKeepAlive = setInterval(async () => {
+						try {pingServer({ id: Math.random() });} catch {}
+					}, electrumKeepAliveInterval);
+				} catch (e) {}
+				clients.peer[network] = { port, host, protocol };
 			}
 			resolve(connectionResponse);
 		} catch (e) {resolve({ error: true, data: e });}
@@ -240,7 +248,6 @@ const disconnectFromPeer = async ({ id = Math.random(), network = "" } = {}) => 
 		return { error: true, id, method: "disconnectFromPeer", data };
 	};
 	try {
-		//console.log("Disconnecting from any previous peer...");
 		if (clients.mainClient[network] === false) {
 			//No peer to disconnect from...
 			return {
