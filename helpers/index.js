@@ -417,6 +417,20 @@ const getTransactions = ({ txHashes = [], id = Math.random(), network = "", time
 	});
 };
 
+const broadcastTransaction = ({ rawTx = [], id = Math.random(), network = "", timeout = undefined } = {}) => {
+	const method = "broadcastTransaction";
+	return new Promise(async (resolve) => {
+		try {
+			if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
+			if (!timeout) timeout = _getTimeout();
+			const { error, data } = await promiseTimeout(timeout, clients.mainClient[network].blockchainTransaction_broadcast(rawTx));
+			resolve({ id, error, method, data, network });
+		} catch (e) {
+			resolve({ id, error: true, method, data: e, network });
+		}
+	});
+};
+
 module.exports = {
 	start,
 	stop,
@@ -430,5 +444,6 @@ module.exports = {
 	getPeers,
 	subscribeHeader,
 	subscribeAddress,
-	getFeeEstimate
+	getFeeEstimate,
+	broadcastTransaction
 };
