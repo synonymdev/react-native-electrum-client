@@ -78,7 +78,7 @@ const pingServer = ({ id = Math.random() } = {}) => {
 
 //peers = A list of peers acquired from default electrum servers using the getPeers method.
 //customPeers = A list of peers added by the user to connect to by default in lieu of the default peer list.
-const start = ({ id = Math.random(), network = "", peers = [], customPeers = []} = {}) => {
+const start = ({ id = Math.random(), network = "", peers = [], customPeers = [], net, tls} = {}) => {
 	const method = "connectToPeer";
 	return new Promise(async (resolve) => {
 		try {
@@ -99,11 +99,12 @@ const start = ({ id = Math.random(), network = "", peers = [], customPeers = []}
 			//Attempt to connect to specified peer
 			let connectionResponse = { error: true, data: "" };
 			if (customPeersLength > 0) {
-				const { host = "", port = "", protocol = "ssl" } = customPeers[0];
-				connectionResponse = await connectToPeer({ host, port, protocol, network });
+				const { host = "", protocol = "ssl" } = customPeers[0];
+				const port = customPeers[0][protocol];
+				connectionResponse = await connectToPeer({ host, port, protocol, network, net, tls });
 			} else {
 				//Attempt to connect to random peer if none specified
-				connectionResponse = await connectToRandomPeer(network, peers);
+				connectionResponse = await connectToRandomPeer(network, peers, 'ssl', net, tls);
 			}
 			resolve({
 				...connectionResponse,
@@ -119,7 +120,7 @@ const start = ({ id = Math.random(), network = "", peers = [], customPeers = []}
 	});
 };
 
-const connectToPeer = ({ port = 50002, host = "", protocol = "ssl", network = "bitcoin" } = {}) => {
+const connectToPeer = ({ port = 50002, host = "", protocol = "ssl", network = "bitcoin", net, tls } = {}) => {
 	return new Promise(async (resolve) => {
 		try {
 			clients.network = network;
@@ -134,8 +135,8 @@ const connectToPeer = ({ port = 50002, host = "", protocol = "ssl", network = "b
 				}
 			}
 			if (needToConnect) {
-				clients.mainClient[network] = new ElectrumClient(port, host, protocol);
-				connectionResponse = await promiseTimeout(1000, clients.mainClient[network].connect());
+				clients.mainClient[network] = new ElectrumClient(port, host, protocol, net, tls);
+				connectionResponse = await promiseTimeout(_getTimeout(), clients.mainClient[network].connect());
 				if (connectionResponse.error) {
 					return resolve(connectionResponse);
 				}
@@ -166,7 +167,7 @@ const connectToPeer = ({ port = 50002, host = "", protocol = "ssl", network = "b
 	});
 };
 
-const connectToRandomPeer = async (network, peers = [], protocol = "ssl") => {
+const connectToRandomPeer = async (network, peers = [], protocol = "ssl", net, tls) => {
 	//Peers can be found in peers.json.
 	//Additional Peers can be located here in servers.json & servers_testnet.json for reference: https://github.com/spesmilo/electrum/tree/master/electrum
 	let hasPeers = false;
@@ -202,7 +203,7 @@ const connectToRandomPeer = async (network, peers = [], protocol = "ssl") => {
 				host = peer.host;
 				protocol = peer.protocol;
 			}
-			const connectionResponse = await connectToPeer({ port, host, protocol, network });
+			const connectionResponse = await connectToPeer({ port, host, protocol, network, net, tls });
 			if (connectionResponse.error === false && connectionResponse.data) {
 				return {
 					error: connectionResponse.error,
