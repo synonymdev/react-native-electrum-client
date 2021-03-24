@@ -17,11 +17,9 @@
     "mocha": "^8.2.0"
   },
   "peerDependencies": {
-    "@photon-sdk/react-native-tcp": "^6.0.0"
+    "react-native-tcp-socket": "^5.2.0"
   },
   "react-native": {
-    "net": "@photon-sdk/react-native-tcp",
-    "tls": "@photon-sdk/react-native-tcp/tls",
     "crypto": "react-native-crypto",
     "_stream_transform": "readable-stream/transform",
     "_stream_readable": "readable-stream/readable",
@@ -32,8 +30,6 @@
     "vm": "vm-browserify"
   },
   "browser": {
-    "net": "@photon-sdk/react-native-tcp",
-    "tls": "@photon-sdk/react-native-tcp/tls",
     "crypto": "react-native-crypto",
     "_stream_transform": "readable-stream/transform",
     "_stream_readable": "readable-stream/readable",
@@ -55,6 +51,5 @@
   "bugs": {
     "url": "https://github.com/synonymdev/rn-electrum-client/issues"
   },
-  "homepage": "https://github.com/synonymdev/rn-electrum-client#readme",
-  "dependencies": {}
+  "homepage": "https://github.com/synonymdev/rn-electrum-client#readme"
 }
