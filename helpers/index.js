@@ -298,6 +298,14 @@ const getPeers = ({ id = Math.random(), network = "" } = {}) => {
 	});
 };
 
+const getConnectedPeer = (network = 'bitcoin') => {
+	try {
+		return clients?.peer[network] ?? '';
+	} catch {
+		return '';
+	}
+};
+
 const subscribeHeader = async ({ id = "subscribeHeader", network = "", onReceive = () => null } = {}) => {
 	try {
 		if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
@@ -446,5 +454,6 @@ module.exports = {
 	subscribeHeader,
 	subscribeAddress,
 	getFeeEstimate,
-	broadcastTransaction
+	broadcastTransaction,
+	getConnectedPeer
 };
