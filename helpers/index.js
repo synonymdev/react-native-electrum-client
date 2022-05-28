@@ -440,6 +440,28 @@ const broadcastTransaction = ({ rawTx = [], id = Math.random(), network = "", ti
 	});
 };
 
+/**
+ * Returns header hex of the provided height and network.
+ * @param {Number} [height]
+ * @param {Number} [id]
+ * @param {"bitcoin" | "bitcoinTestnet"} network
+ * @param {Number | undefined} [timeout]
+ * @return {Promise<{id: Number, error: boolean, method: "getHeader", data: string, network: "bitcoin" | "bitcoinTestnet"}>}
+ */
+const getHeader = ({ height = 0, id = Math.random(), network = "", timeout = undefined } = {}) => {
+	const method = "getHeader";
+	return new Promise(async (resolve) => {
+		try {
+			if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
+			if (!timeout) timeout = _getTimeout();
+			const { error, data } = await promiseTimeout(timeout, clients.mainClient[network].blockchainBlock_getBlockHeader(height));
+			resolve({ id, error, method, data, network });
+		} catch (e) {
+			resolve({ id, error: true, method, data: e, network });
+		}
+	});
+}
+
 module.exports = {
 	start,
 	stop,
@@ -455,5 +477,6 @@ module.exports = {
 	subscribeAddress,
 	getFeeEstimate,
 	broadcastTransaction,
-	getConnectedPeer
+	getConnectedPeer,
+	getHeader,
 };
