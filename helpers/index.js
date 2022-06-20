@@ -444,9 +444,9 @@ const broadcastTransaction = ({ rawTx = [], id = Math.random(), network = "", ti
  * Returns header hex of the provided height and network.
  * @param {Number} [height]
  * @param {Number} [id]
- * @param {"bitcoin" | "bitcoinTestnet"} network
+ * @param {"bitcoin" | "bitcoinTestnet" | "bitcoinRegtest"} network
  * @param {Number | undefined} [timeout]
- * @return {Promise<{id: Number, error: boolean, method: "getHeader", data: string, network: "bitcoin" | "bitcoinTestnet"}>}
+ * @return {Promise<{id: Number, error: boolean, method: "getHeader", data: string, network: "bitcoin" | "bitcoinTestnet" | "bitcoinRegtest"}>}
  */
 const getHeader = ({ height = 0, id = Math.random(), network = "", timeout = undefined } = {}) => {
 	const method = "getHeader";
