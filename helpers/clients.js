@@ -3,23 +3,28 @@ class Clients {
 		this.network = "bitcoin";
 		this.mainClient = {
 			bitcoin: false,
-			bitcoinTestnet: false
+			bitcoinTestnet: false,
+			bitcoinRegtest: false
 		};
 		this.peer = {
 			bitcoin: { port: 0, host: "", protocol: "" },
-			bitcoinTestnet: { port: 0, host: "", protocol: "" }
+			bitcoinTestnet: { port: 0, host: "", protocol: "" },
+			bitcoinRegtest: { port: 0, host: "", protocol: "" }
 		};
 		this.peers = {
 			bitcoin: [],
-			bitcoinTestnet: []
+			bitcoinTestnet: [],
+			bitcoinRegtest: []
 		};
 		this.subscribedAddresses = {
 			bitcoin: [],
-			bitcoinTestnet: []
+			bitcoinTestnet: [],
+			bitcoinRegtest: []
 		};
 		this.subscribedHeaders = {
 			bitcoin: false,
 			bitcoinTestnet: false,
+			bitcoinRegtest: false
 		};
 	}
 
