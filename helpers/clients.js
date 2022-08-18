@@ -26,6 +26,11 @@ class Clients {
 			bitcoinTestnet: false,
 			bitcoinRegtest: false
 		};
+		this.onAddressReceive = {
+			bitcoin: undefined,
+			bitcoinTestnet: undefined,
+			bitcoinRegtest: undefined
+		}
 	}
 
 	updateNetwork(network) {

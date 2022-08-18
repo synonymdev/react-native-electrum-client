@@ -320,13 +320,19 @@ const subscribeHeader = async ({ id = "subscribeHeader", network = "", onReceive
 	}
 };
 
-const subscribeAddress = async ({ id = Math.random(), scriptHash = "", network = "bitcoin", onReceive = (data) => console.log(data) } = {}) => {
+const subscribeAddress = async ({ id = Math.random(), scriptHash = "", network = "bitcoin", onReceive = undefined } = {}) => {
 	try {
 		if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
-		if (clients.subscribedAddresses[network].length < 1) {
-			const res = await promiseTimeout(10000,  clients.mainClient[network].subscribe.on('blockchain.scripthash.subscribe', (onReceive)));
-			if (res.error) return { ...res, id, method: "subscribeAddress" };
+
+		// Set onAddressReceive if wasn't previously.
+		if (onReceive && !clients.onAddressReceive[network]) {
+			clients.onAddressReceive[network] = onReceive;
+			const res = await promiseTimeout(10000,  clients.mainClient[network].subscribe.on('blockchain.scripthash.subscribe', clients.onAddressReceive[network]));
+			if (res.error) {
+				return { ...res, id, method: "subscribeAddress" };
+			}
 		}
+
 		//Ensure this address is not already subscribed
 		if (clients.subscribedAddresses[network].includes(scriptHash)) return { id, error: false, method: "subscribeAddress", data: "Already Subscribed." };
 		const response = await promiseTimeout(10000, clients.mainClient[network].blockchainScripthash_subscribe(scriptHash));
