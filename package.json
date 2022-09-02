@@ -1,6 +1,6 @@
 {
   "name": "rn-electrum-client",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Electrum protocol client for React Native & Node.js",
   "main": "index.js",
   "scripts": {
