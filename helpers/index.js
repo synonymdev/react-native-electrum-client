@@ -245,9 +245,6 @@ const stop = async ({ network = "" } = {}) => {
 };
 
 const disconnectFromPeer = async ({ id = Math.random(), network = "" } = {}) => {
-	const failure = (data = {}) => {
-		return { error: true, id, method: "disconnectFromPeer", data };
-	};
 	try {
 		if (clients.mainClient[network] === false) {
 			//No peer to disconnect from...
@@ -261,12 +258,18 @@ const disconnectFromPeer = async ({ id = Math.random(), network = "" } = {}) => 
 		}
 		//Attempt to disconnect from peer...
 		clients.mainClient[network].close();
-		clients.mainClient[network] = false;
-		clients.network = "";
 		await pauseExecution();
+		//Reset the client.
+		clients.mainClient[network] = false;
+		clients.peer[network] = { port: 0, host: "", protocol: "" };
+		clients.peers[network] = [];
+		clients.subscribedAddresses[network] = [];
+		clients.subscribedHeaders[network] = false;
+		clients.onAddressReceive[network] = undefined;
+		clients.network = "";
 		return { error: false, id, method: "disconnectFromPeer", network, data: "Disconnected..." };
 	} catch (e) {
-		failure(e);
+		return { error: true, id, method: "disconnectFromPeer", data: e };
 	}
 };
 
