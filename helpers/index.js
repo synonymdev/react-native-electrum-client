@@ -471,6 +471,19 @@ const getHeader = ({ height = 0, id = Math.random(), network = "", timeout = und
 	});
 }
 
+const getTransactionMerkle = ({ tx_hash, height, id = Math.random(), network = "", timeout = 2000 } = {}) => {
+	const method = "getTransactionMerkle";
+	return new Promise(async (resolve) => {
+		try {
+			if (clients.mainClient[network] === false) await connectToRandomPeer(network, clients.peers[network]);
+			const { error, data } = await promiseTimeout(timeout, clients.mainClient[network].blockchainTransaction_getMerkle(tx_hash, height));
+			resolve({ id, error, method, data, network });
+		} catch (e) {
+			resolve({ id, error: true, method, data: e, network });
+		}
+	});
+};
+
 module.exports = {
 	start,
 	stop,
@@ -488,4 +501,5 @@ module.exports = {
 	broadcastTransaction,
 	getConnectedPeer,
 	getHeader,
+	getTransactionMerkle,
 };
