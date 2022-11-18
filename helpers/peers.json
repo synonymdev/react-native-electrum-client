@@ -1,7 +1,7 @@
 {
   "bitcoin": [
     {"host": "electrum.aantonop.com", "ssl": 50002, "tcp": 50001},
-    {"host": "bitcoin.lukechilds.co", "ssl": 50002, "tcp": 50001},
+    {"host": "bitcoin.lu.ke", "ssl": 50002, "tcp": 50001},
     {"host": "electrum.hodlister.co", "ssl": 50002, "tcp": 50001},
     {"host": "electrum3.hodlister.co", "ssl": 50002, "tcp": 50001},
     {"host": "ecdsa.net", "ssl": 110, "tcp": 50001},
