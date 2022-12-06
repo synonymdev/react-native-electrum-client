@@ -2,7 +2,7 @@
  - `yarn add https://github.com/synonymdev/rn-electrum-client`
 
 ## Usage & Examples
-```
+```js
 import {
     start,
     getPeers,
