@@ -1,6 +1,6 @@
 {
   "name": "rn-electrum-client",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Electrum protocol client for React Native & Node.js",
   "main": "index.js",
   "scripts": {
@@ -10,11 +10,11 @@
     "type": "git",
     "url": "git://github.com/synonymdev/rn-electrum-client.git"
   },
-  "author": "Synonym",
+  "author": "synonymdev",
   "license": "MIT",
   "devDependencies": {
     "electrum-host-parse": "*",
-    "mocha": "^8.2.0"
+    "mocha": "^10.2.0"
   },
   "peerDependencies": {
     "react-native-tcp-socket": "^5.2.0"
