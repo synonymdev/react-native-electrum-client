@@ -1,5 +1,5 @@
 ## Install
- - `yarn add https://github.com/synonymdev/rn-electrum-client`
+ - `yarn add rn-electrum-client`
 
 ## Usage & Examples
 ```js
