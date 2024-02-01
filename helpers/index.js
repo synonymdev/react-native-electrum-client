@@ -130,7 +130,7 @@ const connectToPeer = ({ port = 50002, host = "", protocol = "ssl", network = "b
 	return new Promise(async (resolve) => {
 		try {
 			clients.network = network;
-			let needToConnect = clients.mainClient[network] === false;
+			let needToConnect = clients.mainClient[network] === false || clients.peer[network]?.host !== host || clients.peer[network]?.port !== port || clients.peer[network]?.protocol !== protocol;
 			let connectionResponse = { error: false, data: clients.peer[network] };
 			if (!needToConnect) {
 				//Ensure the server is still alive
