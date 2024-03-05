@@ -570,9 +570,46 @@ const getTransactionMerkle = ({ tx_hash, height, id = Math.random(), network = "
 	});
 };
 
+const getClient = ({id = Math.random(), network = ""} = {}) => {
+	const method = "getClient";
+	return new Promise(async (resolve) => {
+		try {
+			if (!(clients.mainClient?.[clients.network]
+				&& typeof clients.mainClient[clients.network] === 'object')
+			){
+				const connectRes = await connectToRandomPeer(clients.network, clients.peers[clients.network]);
+				if (connectRes.error) return resolve({...connectRes, id, method, network: clients.network});
+			}
+			resolve({ id, error: false, method, data: clients.mainClient[network], network: clients.network });
+		} catch (e) {
+			resolve({ id, error: true, method, data: e, network: clients.network });
+		}
+	});
+};
+
+const getRawTransaction = ({ txid = "", id = Math.random(), network = "", timeout = 2000 } = {}) => {
+	const method = "getRawTransaction";
+	return new Promise(async (resolve) => {
+		try {
+			if (!(clients.mainClient?.[network]
+				&& typeof clients.mainClient[network] === 'object'
+				&& clients.mainClient[network]?.blockchainTransaction_get)
+			){
+				const connectRes = await connectToRandomPeer(network, clients.peers[network]);
+				if (connectRes.error) return resolve({...connectRes, id, method, network});
+			}
+			const { error, data } = await promiseTimeout(timeout, clients.mainClient[network].blockchainTransaction_get(txid, true));
+			resolve({ id, error, method, data, network });
+		} catch (e) {
+			resolve({ id, error: true, method, data: e, network });
+		}
+	});
+}
+
 module.exports = {
 	start,
 	stop,
+	getClient,
 	pingServer,
 	getAddressScriptHashBalance,
 	getAddressScriptHashBalances,
@@ -580,6 +617,7 @@ module.exports = {
 	getAddressScriptHashesHistory,
 	getAddressScriptHashesMempool,
 	getTransactions,
+	getRawTransaction,
 	getPeers,
 	subscribeHeader,
 	subscribeAddress,
