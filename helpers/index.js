@@ -587,8 +587,8 @@ const getClient = ({id = Math.random(), network = ""} = {}) => {
 	});
 };
 
-const getRawTx = ({ txid = "", id = Math.random(), network = "", timeout = 2000 } = {}) => {
-	const method = "getRawTx";
+const getRawTransaction = ({ txid = "", id = Math.random(), network = "", timeout = 2000 } = {}) => {
+	const method = "getRawTransaction";
 	return new Promise(async (resolve) => {
 		try {
 			if (!(clients.mainClient?.[network]
@@ -617,7 +617,7 @@ module.exports = {
 	getAddressScriptHashesHistory,
 	getAddressScriptHashesMempool,
 	getTransactions,
-	getRawTx,
+	getRawTransaction,
 	getPeers,
 	subscribeHeader,
 	subscribeAddress,
