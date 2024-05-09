@@ -2,7 +2,7 @@ const ElectrumClient = require("../lib/electrum_client");
 const clients = require("./clients");
 
 let electrumKeepAlive = () => null;
-let electrumKeepAliveInterval = 60000;
+let electrumKeepAliveInterval = 30000;
 
 const _getTimeout = ({ arr = [], timeout = 2000 } = {}) => {
 	try {
@@ -84,8 +84,9 @@ const pingServer = ({ id = Math.random() } = {}) => {
 
 //peers = A list of peers acquired from default electrum servers using the getPeers method.
 //customPeers = A list of peers added by the user to connect to by default in lieu of the default peer list.
-const start = ({ id = Math.random(), network = "", peers = [], customPeers = [], net, tls} = {}) => {
+const start = ({ id = Math.random(), network = "", peers = [], customPeers = [], net, tls} = {}, keepAliveInterval = undefined) => {
 	const method = "connectToPeer";
+	electrumKeepAliveInterval = keepAliveInterval || electrumKeepAliveInterval;
 	return new Promise(async (resolve) => {
 		try {
 			if (!network) {
