@@ -1,44 +1,19 @@
 {
   "name": "rn-electrum-client",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Electrum protocol client for React Native & Node.js",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 10000 --exit -b"
+    "example": "node example/index.js"
   },
+  "dependencies": {},
+  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git://github.com/synonymdev/rn-electrum-client.git"
   },
   "author": "synonymdev",
   "license": "MIT",
-  "devDependencies": {
-    "electrum-host-parse": "*",
-    "mocha": "^10.2.0"
-  },
-  "peerDependencies": {
-    "react-native-tcp-socket": "^5.2.0"
-  },
-  "react-native": {
-    "crypto": "react-native-crypto",
-    "_stream_transform": "readable-stream/transform",
-    "_stream_readable": "readable-stream/readable",
-    "_stream_writable": "readable-stream/writable",
-    "_stream_duplex": "readable-stream/duplex",
-    "_stream_passthrough": "readable-stream/passthrough",
-    "stream": "stream-browserify",
-    "vm": "vm-browserify"
-  },
-  "browser": {
-    "crypto": "react-native-crypto",
-    "_stream_transform": "readable-stream/transform",
-    "_stream_readable": "readable-stream/readable",
-    "_stream_writable": "readable-stream/writable",
-    "_stream_duplex": "readable-stream/duplex",
-    "_stream_passthrough": "readable-stream/passthrough",
-    "stream": "stream-browserify",
-    "vm": "vm-browserify"
-  },
   "engines": {
     "node": ">=6"
   },
