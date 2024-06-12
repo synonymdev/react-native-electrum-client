@@ -142,6 +142,7 @@ const connectToPeer = ({ port = 50002, host = "", protocol = "ssl", network = "b
 				}
 			}
 			if (needToConnect) {
+				clients.network = network;
 				clients.mainClient[network] = new ElectrumClient(port, host, protocol, net, tls);
 				connectionResponse = await promiseTimeout(_getTimeout(), clients.mainClient[network].connect());
 				if (connectionResponse.error) {
@@ -236,7 +237,7 @@ const connectToRandomPeer = async (network, peers = [], protocol = "ssl", net, t
 	return { error: true, method: "connectToRandomPeer", data: "Unable to connect to any peer." };
 };
 
-const stop = async ({ network = "" } = {}) => {
+const stop = async ({ network = clients.network } = {}) => {
 	return new Promise(async (resolve) => {
 		try {
 			//Clear/Remove Electrum's keep-alive message.
