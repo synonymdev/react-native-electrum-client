@@ -1,17 +1,15 @@
 {
   "bitcoin": [
-    {"host": "35.187.18.233", "ssl": 8900, "tcp": 8911},
-    {"host": "electrum.aantonop.com", "ssl": 50002, "tcp": 50001},
-    {"host": "bitcoin.lu.ke", "ssl": 50002, "tcp": 50001},
-    {"host": "electrum.hodlister.co", "ssl": 50002, "tcp": 50001},
-    {"host": "electrum3.hodlister.co", "ssl": 50002, "tcp": 50001},
-    {"host": "ecdsa.net", "ssl": 110, "tcp": 50001},
-    {"host": "kirsche.emzy.de", "ssl": 50002, "tcp": 50001}
+    { "host": "35.187.18.233", "ssl": 8900, "tcp": 8911 },
+    { "host": "electrum.aantonop.com", "ssl": 50002, "tcp": 50001 },
+    { "host": "bitcoin.lu.ke", "ssl": 50002, "tcp": 50001 },
+    { "host": "electrum.hodlister.co", "ssl": 50002, "tcp": 50001 },
+    { "host": "electrum3.hodlister.co", "ssl": 50002, "tcp": 50001 },
+    { "host": "ecdsa.net", "ssl": 110, "tcp": 50001 },
+    { "host": "kirsche.emzy.de", "ssl": 50002, "tcp": 50001 }
   ],
   "bitcoinTestnet": [
-    {"host": "testnet.aranguren.org", "ssl": 51002, "tcp": 51001}
+    { "host": "testnet.aranguren.org", "ssl": 51002, "tcp": 51001 }
   ],
-  "bitcoinRegtest": [
-    {"host": "35.233.47.252", "ssl": 18484, "tcp": 18483}
-  ]
+  "bitcoinRegtest": [{ "host": "35.233.47.252", "ssl": 18484, "tcp": 18483 }]
 }
