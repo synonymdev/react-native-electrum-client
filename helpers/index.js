@@ -110,8 +110,9 @@ const start = ({ id = Math.random(), network = "", peers = [], customPeers = [],
 				const port = customPeers[0][protocol];
 				connectionResponse = await connectToPeer({ host, port, protocol, network, net, tls });
 			} else {
-				//Attempt to connect to random peer if none specified
-				connectionResponse = await connectToRandomPeer(network, peers, 'ssl', net, tls);
+				// Attempt to connect to random peer if none specified
+				// TODO: use TLS after fix for nodejs
+				connectionResponse = await connectToRandomPeer(network, peers, 'tcp', net, tls);
 			}
 			resolve({
 				...connectionResponse,
@@ -329,7 +330,7 @@ const getConnectedPeer = (network = 'bitcoin') => {
 	}
 };
 
-const subscribeHeader = async ({ id = "subscribeHeader", network = "", onReceive = () => null } = {}) => {
+const subscribeHeader = async ({ id = "subscribeHeader", network = "", onReceive = () => {} } = {}) => {
 	const method = "subscribeHeader";
 	try {
 		if (!(clients.mainClient?.[network]
