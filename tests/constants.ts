@@ -4,7 +4,7 @@ const peer = {
   host: "testnet.aranguren.org",
   tcp: 51001,
   ssl: 51002,
-  protocol: "tcp",
+  protocol: "ssl",
 };
 
 const testPhrase =

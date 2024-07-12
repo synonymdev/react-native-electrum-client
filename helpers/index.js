@@ -111,8 +111,7 @@ const start = ({ id = Math.random(), network = "", peers = [], customPeers = [],
 				connectionResponse = await connectToPeer({ host, port, protocol, network, net, tls });
 			} else {
 				// Attempt to connect to random peer if none specified
-				// TODO: use TLS after fix for nodejs
-				connectionResponse = await connectToRandomPeer(network, peers, 'tcp', net, tls);
+				connectionResponse = await connectToRandomPeer(network, peers, 'ssl', net, tls);
 			}
 			resolve({
 				...connectionResponse,

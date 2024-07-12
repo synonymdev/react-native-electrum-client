@@ -21,8 +21,7 @@ describe("Electrum client", function () {
       // id: 0.29098913884072286,
       method: "connectToPeer",
       network: "bitcoinTestnet",
-      // TODO: use TLS after fix for nodejs
-      data: { port: peer.tcp, host: peer.host },
+      data: { port: peer.ssl, host: peer.host },
       customPeers: [],
       error: false,
     };
@@ -74,8 +73,7 @@ describe("Electrum client", function () {
       // id: 0.1959018255832432,
       method: "connectToPeer",
       network: "bitcoinTestnet",
-      // TODO: use TLS after fix for nodejs
-      data: { port: peer.tcp, host: peer.host },
+      data: { port: peer.ssl, host: peer.host },
       customPeers: [peer],
       error: false,
     };
