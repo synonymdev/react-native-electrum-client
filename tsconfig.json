@@ -1,4 +1,5 @@
 {
+  // "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
     "allowJs": false,
     "alwaysStrict": true,
@@ -16,4 +17,17 @@
     "strictPropertyInitialization": true,
     "useUnknownInCatchVariables": false
   }
+  // "forceConsistentCasingInFileNames": true,
+  // "lib": ["esnext"],
+  // "noImplicitThis": true,
+  // "removeComments": true,
+  // "resolveJsonModule": true,
+  // "strictNullChecks": true,
+  // "strictFunctionTypes": true,
+  // "strictPropertyInitialization": true,
+  // "noUncheckedIndexedAccess": true
+  // // "useUnknownInCatchVariables": false
+  // // "typeRoots": ["./node_modules/@types"]
+  // }
+  // "include": ["./**/*.ts"]
 }
